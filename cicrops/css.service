@@ -1,0 +1,10 @@
+[Unit]
+Description=CucumberSortingSystem
+
+[Service]
+Type=simple
+ExecStart=/home/pi/proto3/test2/css/boot_script.sh
+
+[Install]
+WantedBy=multi-user.target
+

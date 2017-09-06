@@ -1,0 +1,95 @@
+<Marker@Image>:
+#	canvas:
+#		Color:
+#			rgba: (0, 0, 0, .5)
+#		Rectangle:
+#			texture: self.texture
+#			size: self.width, self.height
+#			pos: self.x, self.y
+	size: (80, 80)
+	size_hint: (None, None)
+	allow_stretch: True
+
+<SplashScreen>:
+	FloatLayout:
+		Label:
+			id: splash
+			text: '[size=100]Cucumber Sorting System[/size] \n[size=70]version: 1.0b[/size]'
+			halign: 'center'
+			color: (0.2, 0.2, 0.2, 1)
+			bold: True
+			markup: True
+			size: self.texture_size
+			pos_hint: {'center_x':.5, 'center_y':.5}
+
+<CalibrationScreen>:
+	FloatLayout:
+	Marker:
+		source: "marker/marker_left_top.jpg"
+		pos_hint: {'x':0.01, 'top':0.99}
+	Marker:	
+		source: "marker/marker_left_bottom.jpg"
+		pos_hint: {'x':0.01, 'y':0.01}
+	Marker:
+		source: "marker/marker_right_top.jpg"
+		pos_hint: {'right':0.99, 'top':0.99}
+	Marker:
+		source: "marker/marker_right_bottom.jpg"
+		pos_hint: {'right':0.99, 'y':0.01}
+
+<PredictionScreen>:
+	FloatLayout:
+		FloatLayout:
+			id: monitor
+			size_hint: 1.0, 1.0
+		Label:
+			text: root._fps
+			color: (0.4, 0.4, 0.4, 1)
+			bold: True
+			size: self.texture_size
+			font_size: 30
+			size_hint: (None, None)
+			pos_hint: {'x':0.0, 'y':0.0}
+
+<LearningScreen>:
+	FloatLayout:
+		FloatLayout:
+			id: monitor
+			size_hint: 1.0, 1.0
+		Label:
+			id: center_text
+			text: root._center_text
+			halign: 'center'
+			color: (0.2, 0.2, 0.2, 1)
+			bold: True
+			size: self.texture_size
+			pos_hint: {'center_x':.5, 'center_y':.5}
+			font_size:100
+		Label:
+			id: right_top
+			text: root._label_text
+			color: (0.2, 0.2, 0.2, 1)
+			bold: True
+			size: self.texture_size
+			size_hint: (None, None)
+			pos_hint: {'right':0.99, 'top':0.99}
+			font_size:100
+
+<InfomationScreen>:
+	FloatLayout:
+		BoxLayout:
+			id: chart_layout
+			padding: 10
+			color: (0.2, 0.2, 0.2, 1)
+			size_hint: (0.9, 0.9)
+			pos_hint: {'center_x':.5, 'center_y':.5}
+		Label:
+			id: info_splash
+			text: root._center_text
+			halign: 'center'
+			color: (0.2, 0.2, 0.2, 1)
+			bold: True
+			markup: True
+			size: self.texture_size
+			pos_hint: {'center_x':.5, 'center_y':.5}
+			font_size:100
