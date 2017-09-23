@@ -7,7 +7,6 @@ import iod.switches as sw
 import time
 import kivy
 import cv2
-kivy.require('1.9.1')
 
 from kivy.config import Config
 Config.set('graphics', 'width', '1920')
@@ -17,9 +16,6 @@ Config.set('graphics', 'height', '1080')
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
-#from kivy.graphics import *
-#from kivy.uix.label import Label
-#from kivy.core.text import Label as CoreLabel
 from kivy.clock import Clock
 from kivy.core.window import Window
 from screen import *
@@ -54,4 +50,3 @@ class Main(App):
 
 if __name__ == '__main__':
 	Main().run()
-
