@@ -29,18 +29,19 @@ class Main(App):
 
 	def build(self):
 		cam = TableCamera((Config.getint('graphics', 'width'), Config.getint('graphics', 'height')))
+		sws = sw.Switches()
+		sm = ScreenManager(transition=NoTransition())
+		sm.add_widget(InfomationScreen(sws, name='infomation'))
+		sm.add_widget(LearningScreen(cam, sws, name='learning'))
+		sm.add_widget(PredictionScreen(cam, sws, name='prediction'))
+		sm.add_widget(CalibrationScreen(cam, sws, name='calibration'))
+		sm.add_widget(SplashScreen(name='splash'))
+		sm.current = 'splash'
+
 		self._cam = cam
-		self._sws = sw.Switches()
-		self.sm = ScreenManager(transition=NoTransition())
-		self.sm.add_widget(InfomationScreen(name='infomation'))
-		self.sm.add_widget(LearningScreen(camera=cam, name='learning'))
-		self.sm.add_widget(PredictionScreen(camera=cam, name='prediction'))
-		self.sm.add_widget(CalibrationScreen(camera=cam, name='calibration'))
-		self.sm.add_widget(SplashScreen(name='splash'))
-		self.sm.current = 'splash'
+		self._sws = sws
 		Clock.schedule_interval(self.on_loop, 0.001)
-		self._old = time.time()
-		return self.sm
+		return sm
 
 	def on_loop(self, dt):
 		self._sws.update()

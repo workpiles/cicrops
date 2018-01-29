@@ -27,16 +27,16 @@ class LearningScreen(Screen):
 	_center_text = StringProperty()
 	_label_text = StringProperty()
 
-	def __init__(self, **kwargs):
+	def __init__(self, cam, sws, **kwargs):
 		super(Screen, self).__init__(**kwargs)
 
-		self._cam = kwargs['camera']
+		self._cam = cam
 		self._looper = None
 		self._label_id = 0
 		self._center_text = ''
 		self._label_text = ''
 		self._req_commit = Queue(1)
-		self._sws = sw.Switches()
+		self._sws = sws
 		self._captured_images = None
 
 	def on_enter(self):

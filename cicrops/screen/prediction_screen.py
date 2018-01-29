@@ -18,55 +18,41 @@ LABEL2 = ['A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'C', '?']
 PX2CM_FACTOR = 0.083
 MAX_RESIZE_RATIO = 0.2
 
-#STATE_PREDICTING = 0
-#STATE_PREDICTED = 1
-
 class PredictionScreen(Screen):
 	_fps = StringProperty()
 
-	def __init__(self, **kwargs):
+	def __init__(self, cam, sws, **kwargs):
 		super(Screen, self).__init__(**kwargs)
 		self._updateTime = 0
 		self._fps = "FPS:00.00"
 
-		self._cam = kwargs['camera']
+		self._cam = cam
 		self._label1 = False
 		self._looper = None
 		self._classifier = RankClassifier()
-		self._sws = sw.Switches()
+		self._sws = sws
 		self._wm = WorkloadMonitor()
-#		self._state = STATE_PREDICTING
 
 	def on_enter(self):
 		self._looper = Clock.schedule_interval(self.on_loop, 0.3)
-#		self._state = STATE_PREDICTING
 
 	def on_leave(self):
 		self._looper.cancel()
 		
 	def capture(self):
-		start = time.time()
 		result = self._cam.capture()
-#		if self._state==STATE_PREDICTING:
 		if not result.moving and len(result.images) > 0:
 			h_ratio = self._sws.length_meter.get_balance() * MAX_RESIZE_RATIO
 			w_ratio = self._sws.width_meter.get_balance() * MAX_RESIZE_RATIO
 			predictions = self._classifier.predict(result.images, result.areas, h_ratio, w_ratio)
-			#print(predicts, "elapsed:%g"%(time.time()-start))
 			self.draw_box_and_label(result.images, result.rects, result.centers, predictions)
 			self._wm.count(predictions.get_top_labels())
-#			self._state = STATE_PREDICTED
 		else:
 			self.draw_box(result.rects)
 			if len(result.images) == 0:
 				self._wm.clear()
-#		elif self._state==STATE_PREDICTED:
-#			if len(result.images)==0:
-#				self._state=STATE_PREDICTING
-
 			
 	def on_loop(self, dt):
-		start = time.time()
 		select = self._sws.select_meter.get_balance()
 		if select < 0 :
 			self._label1 = False
@@ -78,8 +64,6 @@ class PredictionScreen(Screen):
 			self.capture()
 		else:
 			self.manager.current = mode
-
-		#print("predict:", time.time() - start)
 
 	def draw_box_and_label(self, images, rects, centers, predictions):
 		elapsed = time.time() - self._updateTime
@@ -143,7 +127,6 @@ class PredictionScreen(Screen):
 		canvas.clear()
 		for rect in rects:
 			with canvas:
-				#Color(0.04, 0.57, 0.77)
 				Color(0.5, 0.76, 0.86)
 				Line(points=rect, width=2, close=True)
 

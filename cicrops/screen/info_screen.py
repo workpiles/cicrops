@@ -19,12 +19,12 @@ STATE_INFO = 1
 class InfomationScreen(Screen):
 	_center_text = StringProperty()
 
-	def __init__(self, **kwargs):
+	def __init__(self, sws, **kwargs):
 		super(Screen, self).__init__(**kwargs)
 
 		self._state = STATE_SPLASH
 		self._looper = None
-		self._sws = Switches()
+		self._sws = sws
 
 	def on_enter(self):
 		self._center_text = "Infomation"

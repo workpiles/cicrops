@@ -7,10 +7,10 @@ from kivy.clock import Clock
 import iod.switches as sw
 
 class CalibrationScreen(Screen):
-	def __init__(self, **kwargs):
+	def __init__(self, cam, sws, **kwargs):
 		super(Screen, self).__init__(**kwargs)
-		self._cam = kwargs['camera']
-		self._sws = sw.Switches()
+		self._cam = cam
+		self._sws = sws
 
 	def on_pre_enter(self):
 		pass
