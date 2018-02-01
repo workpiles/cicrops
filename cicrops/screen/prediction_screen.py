@@ -8,7 +8,6 @@ from kivy.core.text import Label as CoreLabel
 from kivy.graphics import *
 from kivy.clock import Clock
 from rank_classifier import RankClassifier, Predictions
-from workload_monitor import WorkloadMonitor
 import time
 import iod.switches as sw
 
@@ -31,7 +30,6 @@ class PredictionScreen(Screen):
 		self._looper = None
 		self._classifier = RankClassifier()
 		self._sws = sws
-		self._wm = WorkloadMonitor()
 
 	def on_enter(self):
 		self._looper = Clock.schedule_interval(self.on_loop, 0.3)
@@ -46,11 +44,8 @@ class PredictionScreen(Screen):
 			w_ratio = self._sws.width_meter.get_balance() * MAX_RESIZE_RATIO
 			predictions = self._classifier.predict(result.images, result.areas, h_ratio, w_ratio)
 			self.draw_box_and_label(result.images, result.rects, result.centers, predictions)
-			self._wm.count(predictions.get_top_labels())
 		else:
 			self.draw_box(result.rects)
-			if len(result.images) == 0:
-				self._wm.clear()
 			
 	def on_loop(self, dt):
 		select = self._sws.select_meter.get_balance()

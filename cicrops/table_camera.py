@@ -4,13 +4,15 @@ from __future__ import print_function
 
 import cv2
 import numpy as np
+import cPickle as pickle
 
 TEMPLATE_SIZE = 25
 MOVING_THRESHOLD = 3
 OFFSET = 10
 
 class CameraResult(object):
-	def __init__(self, moving, caps, areas, centers, rects):
+	def __init__(self, src, moving, caps, areas, centers, rects):
+		self.src = src
 		self.moving = moving
 		self.images = caps
 		self.areas = areas
@@ -65,7 +67,17 @@ class TableCamera(object):
 		self._matrix = self._getPerspectiveTransform([tl, tr, br, bl], self._capture_size)
 		frame = cv2.warpPerspective(frame, self._matrix, self._capture_size)
 
-		cv2.imwrite("camera_log/calib_result.jpg", frame)
+		#cv2.imwrite("camera_log/calib_result.jpg", frame)
+		with open('calib.pkl', mode='wb') as f:
+			cali_param = {'capture_size': self._capture_size, 'matrix': self._matrix}
+			pickle.dump(cali_param, f)
+		return frame, self._capture_size
+
+	def restore_calibration(self):
+		with open('calib.pkl', mode='rb') as f:
+			param = pickle.load(f)
+			self._capture_size = param['capture_size']
+			self._matrix = param['matrix']
 
 	def _patternMatch(self, image, pattern):
 		template = cv2.imread(pattern, 0)
@@ -106,7 +118,7 @@ class TableCamera(object):
 
 		rects = self._get_display_rects(contours)
 		centers = self._get_display_centers(centers)
-		result = CameraResult((self._num_of_nochange < MOVING_THRESHOLD),
+		result = CameraResult(frame, (self._num_of_nochange < MOVING_THRESHOLD),
 														objects, areas, centers, rects)
 		return result
 	
@@ -181,10 +193,15 @@ class TableCamera(object):
 		self._cam.release()
 
 if __name__=='__main__':
-	cam = TableCamera()
-	cam.calibration()
+	cam = TableCamera((1920, 1080))
+	cam.restore_calibration()
 
-	for i in xrange(200):
+	while 1:
 		result = cam.capture()
-		print(result.moving)
+		cv2.imshow("test", result.src)
+
+		key = cv2.waitKey(3) & 0xff
+		if key==ord('q'):
+			break;
+
 

@@ -39,7 +39,5 @@ class Switches():
 		pos = self.mode_sw.get_position()
 		if pos==0:
 			return 'prediction'
-		elif pos==1:
-			return 'learning'
 		else:
-			return 'infomation'
+			return 'learning'

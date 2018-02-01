@@ -162,8 +162,6 @@ class LearningScreen(Screen):
 			self._task()
 		else:
 			self.manager.current = mode
-			
-		#print("learning", time.time()-start)
 		
 	def capture(self):
 		result = self._cam.capture()
