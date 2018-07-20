@@ -3,7 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 from table_camera import TableCamera
-import iod.switches as sw
+from control_panel import ControlPanel
 import time
 import kivy
 import cv2
@@ -28,21 +28,18 @@ class Main(App):
 		super(Main, self).__init__(**kwargs)
 
 	def build(self):
-		cam = TableCamera((Config.getint('graphics', 'width'), Config.getint('graphics', 'height')))
-		sws = sw.Switches()
+		self._cam = TableCamera((Config.getint('graphics', 'width'), Config.getint('graphics', 'height')))
+		self._control = ControlPanel()
 		sm = ScreenManager(transition=NoTransition())
 		sm.add_widget(SplashScreen(name='splash'))
-		sm.add_widget(CalibrationScreen(cam, sws, name='calibration'))
-		sm.add_widget(PredictionScreen(cam, sws, name='prediction'))
+		sm.add_widget(CalibrationScreen(self._cam, name='calibration'))
+		sm.add_widget(PredictionScreen(self._cam, name='prediction'))
 		sm.current = 'splash'
-
-		self._cam = cam
-		self._sws = sws
 		Clock.schedule_interval(self.on_loop, 0.001)
 		return sm
 
 	def on_loop(self, dt):
-		self._sws.update()
+		self._control.update()
 		
 	def on_stop(self):
 		self._cam.release()

@@ -8,7 +8,7 @@ from iod.sw import SW
 from iod.rotary_sw import RotarySW
 from threading import Lock
 
-class Switches():
+class ControlPanel():
 	__instance = None
 	__lock = Lock()
 
@@ -35,9 +35,3 @@ class Switches():
 		self.width_meter.update()
 		self.select_meter.update()
 		
-	def get_mode_str(self):
-		pos = self.mode_sw.get_position()
-		if pos==0:
-			return 'prediction'
-		else:
-			return 'learning'

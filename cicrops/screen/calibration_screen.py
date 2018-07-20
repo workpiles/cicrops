@@ -4,13 +4,11 @@ from __future__ import print_function
 
 from kivy.uix.screenmanager import Screen
 from kivy.clock import Clock
-import iod.switches as sw
 
 class CalibrationScreen(Screen):
-	def __init__(self, cam, sws, **kwargs):
+	def __init__(self, cam, **kwargs):
 		super(Screen, self).__init__(**kwargs)
 		self._cam = cam
-		self._sws = sws
 
 	def on_pre_enter(self):
 		pass

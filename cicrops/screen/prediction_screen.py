@@ -9,10 +9,8 @@ from kivy.graphics import *
 from kivy.clock import Clock
 from rank_classifier import RankClassifier, Predictions
 import time
-import iod.switches as sw
 
-LABEL1 = ['2L', 'L', 'M', 'S', '2S', 'BL', 'BM', 'BS', 'C', '?']
-LABEL2 = ['A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'C', '?']
+LABEL = ['2L', 'L', 'M', 'S', '2S', 'BL', 'BM', 'BS', 'C', '?']
 
 PX2CM_FACTOR = 0.083
 MAX_RESIZE_RATIO = 0.2
@@ -20,16 +18,14 @@ MAX_RESIZE_RATIO = 0.2
 class PredictionScreen(Screen):
 	_fps = StringProperty()
 
-	def __init__(self, cam, sws, **kwargs):
+	def __init__(self, cam, **kwargs):
 		super(Screen, self).__init__(**kwargs)
 		self._updateTime = 0
 		self._fps = "FPS:00.00"
 
 		self._cam = cam
-		self._label1 = False
 		self._looper = None
 		self._classifier = RankClassifier()
-		self._sws = sws
 
 	def on_enter(self):
 		self._looper = Clock.schedule_interval(self.on_loop, 0.3)
@@ -37,25 +33,19 @@ class PredictionScreen(Screen):
 	def on_leave(self):
 		self._looper.cancel()
 		
+	def on_loop(self, dt):
+		self.capture()
+
 	def capture(self):
 		result = self._cam.capture()
 		if not result.moving and len(result.images) > 0:
-			h_ratio = self._sws.length_meter.get_balance() * MAX_RESIZE_RATIO
-			w_ratio = self._sws.width_meter.get_balance() * MAX_RESIZE_RATIO
+			h_ratio = 0 * MAX_RESIZE_RATIO #TODO: show conpane
+			w_ratio = 0 * MAX_RESIZE_RATIO
 			predictions = self._classifier.predict(result.images, result.areas, h_ratio, w_ratio)
 			self.draw_box_and_label(result.images, result.rects, result.centers, predictions)
 		else:
 			self.draw_box(result.rects)
 			
-	def on_loop(self, dt):
-		select = self._sws.select_meter.get_balance()
-		if select < 0 :
-			self._label1 = False
-		else:
-			self._label1 = True
-
-		self.capture()
-
 	def draw_box_and_label(self, images, rects, centers, predictions):
 		elapsed = time.time() - self._updateTime
 		fps = 1.0 / elapsed
@@ -72,7 +62,7 @@ class PredictionScreen(Screen):
 				color = (0.7, 0.7, 0.7, 1)
 			r,g,b,_ = color
 
-			label_text = LABEL1[p[0]] if self._label1 else LABEL2[p[0]]
+			label_text = LABEL[p[0]]
 			label = CoreLabel(text="Rank  :%s"%(label_text), font_size=30, color=color, italic=True)
 			label.refresh()
 			texture = label.texture
@@ -90,7 +80,7 @@ class PredictionScreen(Screen):
 			texture3 = accuracy.texture
 			texture3_size = list(texture3.size)
 			
-			label2_text = LABEL1[p[1]] if self._label1 else LABEL2[p[1]]
+			label2_text = LABEL[p[1]]
 			label2 = CoreLabel(text="(%s)"%(label2_text), font_size=20,italic=True)
 			label2.refresh()
 			texture4 = label2.texture
