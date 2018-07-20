@@ -10,6 +10,9 @@ TEMPLATE_SIZE = 25
 MOVING_THRESHOLD = 3
 OFFSET = 10
 
+CAP_WIDTH  = 640
+CAP_HEIGHT = 480
+
 class CameraResult(object):
 	def __init__(self, src, moving, caps, areas, centers, rects):
 		self.src = src
@@ -24,8 +27,8 @@ class TableCamera(object):
 
 	def __init__(self, disp_size, dev=0):
 		cam = cv2.VideoCapture(dev)
-		cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, 640)
-		cam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
+		cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, CAP_WIDTH)
+		cam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, CAP_HEIGHT)
 		self._cam = cam
 		self._mask = None
 		self._frame = None
@@ -65,13 +68,18 @@ class TableCamera(object):
 		self._capture_size = (frame_width, frame_height)
 
 		self._matrix = self._getPerspectiveTransform([tl, tr, br, bl], self._capture_size)
-		frame = cv2.warpPerspective(frame, self._matrix, self._capture_size)
-
+		#frame = cv2.warpPerspective(frame, self._matrix, self._capture_size)
 		#cv2.imwrite("camera_log/calib_result.jpg", frame)
 		with open('calib.pkl', mode='wb') as f:
 			cali_param = {'capture_size': self._capture_size, 'matrix': self._matrix}
 			pickle.dump(cali_param, f)
-		return frame, self._capture_size
+
+		#Convert to relative
+		tl = (tl[0] / CAP_WIDTH, tl[1] / CAP_HEIGHT)
+		tr = (tr[0] / CAP_WIDTH, tr[1] / CAP_HEIGHT)
+		bl = (bl[0] / CAP_WIDTH, bl[1] / CAP_HEIGHT)
+		br = (br[0] / CAP_WIDTH, br[1] / CAP_HEIGHT)
+		return (tl, tr, bl, br)
 
 	def restore_calibration(self):
 		with open('calib.pkl', mode='rb') as f:
