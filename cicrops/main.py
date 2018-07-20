@@ -31,11 +31,9 @@ class Main(App):
 		cam = TableCamera((Config.getint('graphics', 'width'), Config.getint('graphics', 'height')))
 		sws = sw.Switches()
 		sm = ScreenManager(transition=NoTransition())
-		#sm.add_widget(InfomationScreen(sws, name='infomation'))
 		sm.add_widget(SplashScreen(name='splash'))
 		sm.add_widget(CalibrationScreen(cam, sws, name='calibration'))
 		sm.add_widget(PredictionScreen(cam, sws, name='prediction'))
-		sm.add_widget(LearningScreen(cam, sws, name='learning'))
 		sm.current = 'splash'
 
 		self._cam = cam

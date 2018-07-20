@@ -16,12 +16,12 @@ class CalibrationScreen(Screen):
 		pass
 	
 	def on_enter(self):
-		Clock.schedule_once(self.on_calibration, 2)
+		Clock.schedule_once(self.start_calibration, 2)
 	
-	def on_calibration(self, dt):
+	def start_calibration(self, dt):
 		self._cam.calibration()
 		
-		self.manager.current = self._sws.get_mode_str()
+		self.manager.current = 'prediction'
 		self.manager.remove_widget(self)
 
 	def on_pre_leave(self):

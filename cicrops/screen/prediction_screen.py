@@ -54,11 +54,7 @@ class PredictionScreen(Screen):
 		else:
 			self._label1 = True
 
-		mode = self._sws.get_mode_str()
-		if mode=='prediction':
-			self.capture()
-		else:
-			self.manager.current = mode
+		self.capture()
 
 	def draw_box_and_label(self, images, rects, centers, predictions):
 		elapsed = time.time() - self._updateTime
@@ -111,8 +107,6 @@ class PredictionScreen(Screen):
 
 		self._fps = "FPS:%02.2f"%(fps)
 		self._updateTime = time.time()
-
-
 
 	def draw_box(self, rects):
 		elapsed = time.time() - self._updateTime
