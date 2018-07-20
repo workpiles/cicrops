@@ -22,9 +22,7 @@ class CameraResult(object):
 		self.centers = centers
 		self.rects = rects
 
-class TableCamera(object):
-	__instance = None
-
+class Camera(object):
 	def __init__(self, disp_size, dev=0):
 		cam = cv2.VideoCapture(dev)
 		cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, CAP_WIDTH)
@@ -37,11 +35,6 @@ class TableCamera(object):
 		self._num_of_nochange = 0
 		self._centers_buff = []
 		self._disp_size = disp_size
-
-	def __new__(cls, *args, **keys):
-		if cls.__instance is None:
-			cls.__instance = object.__new__(cls)
-		return cls.__instance
 
 	def get_capture_size(self):
 		return self._capture_size

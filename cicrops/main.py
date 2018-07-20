@@ -2,11 +2,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from table_camera import TableCamera
+from camera import Camera
 from control_panel import ControlPanel
 import time
 import kivy
-import cv2
 
 from kivy.config import Config
 Config.set('graphics', 'width', '1920')
@@ -28,7 +27,7 @@ class Main(App):
 		super(Main, self).__init__(**kwargs)
 
 	def build(self):
-		self._cam = TableCamera((Config.getint('graphics', 'width'), Config.getint('graphics', 'height')))
+		self._cam = Camera((Config.getint('graphics', 'width'), Config.getint('graphics', 'height')))
 		self._control = ControlPanel()
 		sm = ScreenManager(transition=NoTransition())
 		sm.add_widget(SplashScreen(name='splash'))
