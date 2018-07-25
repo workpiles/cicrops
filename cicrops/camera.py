@@ -5,6 +5,7 @@ from __future__ import print_function
 import cv2
 import numpy as np
 import cPickle as pickle
+import time
 
 TEMPLATE_SIZE = 25
 MOVING_THRESHOLD = 3
@@ -85,7 +86,7 @@ class Camera(object):
 		template = cv2.resize(template, (TEMPLATE_SIZE, TEMPLATE_SIZE))
 		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 		_, gray = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY)
-		cv2.imwrite("camera_log/ptnMatch.jpg", gray)
+		#cv2.imwrite("camera_log/ptnMatch.jpg", gray)
 		res = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
 		min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 		#return max_loc if max_val > 0.5 else None
@@ -125,10 +126,40 @@ class Camera(object):
 	
 	def _getContourImage(self, img, contours):
 		images = []
-		for center, size, angle in contours:
-			matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
-			rotate = cv2.warpAffine(img, matrix, (img.shape[1], img.shape[0]), flags=cv2.INTER_CUBIC)
-			crop = rotate[int(center[1] - size[1]/2):int(center[1] + size[1]/2),int(center[0] - size[0]/2):int(center[0] + size[0]/2),:]
+		for contour in contours:
+			center, size, angle = contour
+			p = cv2.cv.BoxPoints(contour)
+			rect = np.int0(((min(p[0][0],p[1][0],p[2][0],p[3][0]), min(p[0][1],p[1][1],p[2][1],p[3][1])), 
+											(max(p[0][0],p[1][0],p[2][0],p[3][0]), max(p[0][1],p[1][1],p[2][1],p[3][1]))))
+			rect[rect < 0] = 0
+			if rect[0][0] > self._capture_size[0]:
+				rect[0][0] = self._capture_size[0]
+			if rect[0][1] > self._capture_size[1]:
+				rect[0][1] = self._capture_size[1]
+			if rect[1][0] > self._capture_size[0]:
+				rect[1][0] = self._capture_size[0]
+			if rect[1][1] > self._capture_size[1]:
+				rect[1][1] = self._capture_size[1]
+
+			croped = img[rect[0][1]:rect[1][1], rect[0][0]:rect[1][0],:]
+			croped_center = (center[0] - rect[0][0], center[1] - rect[0][1])
+
+			matrix = cv2.getRotationMatrix2D(croped_center, angle, 1.0)
+			rotate = cv2.warpAffine(croped, matrix, (croped.shape[1], croped.shape[0]), flags=cv2.INTER_CUBIC)
+
+			h_start = int(croped_center[1] - size[1]/2)
+			if h_start < 0 :
+				h_start = 0
+			h_end = int(croped_center[1] + size[1]/2)
+			if h_end > rotate.shape[0]:
+				h_end = rotate.shape[0]
+			w_start = int(croped_center[0] - size[0]/2)
+			if w_start < 0:
+				w_start = 0
+			w_end = int(croped_center[0] + size[0]/2)
+			if w_end > rotate.shape[1]:
+				w_end = rotate.shape[1]
+			crop = rotate[h_start:h_end, w_start:w_end, :]
 			images.append(crop)
 		return images
 
@@ -137,7 +168,7 @@ class Camera(object):
 		#_, mask = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY)
 		_, mask = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY)
 		mask = cv2.bitwise_not(mask)
-		cv2.imwrite("camera_log/mask.jpg", mask)
+		#cv2.imwrite("camera_log/mask.jpg", mask)
 		return mask
 		
 	def _getContours(self, mask):
