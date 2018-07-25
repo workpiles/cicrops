@@ -30,6 +30,7 @@ class Main(App):
 		self._cam = Camera((Config.getint('graphics', 'width'), Config.getint('graphics', 'height')))
 		self._control = ControlPanel()
 		sm = ScreenManager(transition=NoTransition())
+		sm.add_widget(DummyScreen(name='dummy'))
 		sm.add_widget(SplashScreen(name='splash'))
 		sm.add_widget(CalibrationScreen(self._cam, name='calibration'))
 		sm.add_widget(PredictionScreen(self._cam, name='prediction'))

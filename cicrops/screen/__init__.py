@@ -1,3 +1,4 @@
 from screen.splash_screen import SplashScreen
 from screen.calibration_screen import CalibrationScreen
 from screen.prediction_screen import PredictionScreen
+from screen.dummy_screen import DummyScreen
