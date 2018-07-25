@@ -28,7 +28,7 @@ class PredictionScreen(Screen):
 		self._classifier = RankClassifier()
 
 	def on_enter(self):
-		self._looper = Clock.schedule_interval(self.on_loop, 0.3)
+		self._looper = Clock.schedule_interval(self.on_loop, 0.1)
 
 	def on_leave(self):
 		self._looper.cancel()
