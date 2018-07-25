@@ -36,6 +36,8 @@ class Main(App):
 		sm.add_widget(PredictionScreen(self._cam, name='prediction'))
 		sm.current = 'splash'
 		Clock.schedule_interval(self.on_loop, 0.001)
+
+		self._control.add_mode_sw_listener(sm.get_screen('prediction').changed_disp_mode)
 		return sm
 
 	def on_loop(self, dt):

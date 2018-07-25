@@ -8,7 +8,7 @@ from iod.sw import SW
 from iod.rotary_sw import RotarySW
 from threading import Lock
 
-class ControlPanel():
+class ControlPanel(object):
 	__instance = None
 	__lock = Lock()
 
@@ -20,6 +20,8 @@ class ControlPanel():
 	length_meter = Potentiometer(mcp, 1)
 	width_meter = Potentiometer(mcp, 2)
 	select_meter = Potentiometer(mcp, 0)
+
+	_mode_sw_listener = []
 
 	def __new__(cls):
 		with cls.__lock:
@@ -34,4 +36,12 @@ class ControlPanel():
 		self.length_meter.update()
 		self.width_meter.update()
 		self.select_meter.update()
+
+		if self.mode_sw.is_changed():
+			for lister in self._mode_sw_listener:
+				lister(self.mode_sw.get_position())
+				
 		
+	def add_mode_sw_listener(self, func):
+		self._mode_sw_listener.append(func)
+

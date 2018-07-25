@@ -9,14 +9,14 @@ import time
 
 TEMPLATE_SIZE = 25
 MOVING_THRESHOLD = 3
-OFFSET = 10
+OFFSET = 16
 
 CAP_WIDTH  = 640
 CAP_HEIGHT = 480
 
 class CameraResult(object):
-	def __init__(self, src, moving, caps, areas, centers, rects):
-		self.src = src
+	def __init__(self, shadow, moving, caps, areas, centers, rects):
+		self.shadow = shadow
 		self.moving = moving
 		self.images = caps
 		self.areas = areas
@@ -104,11 +104,15 @@ class Camera(object):
 		frame = cv2.warpPerspective(frame, self._matrix, self._capture_size)
 
 		mask = self._getMaskFromThreshold(frame)
-		masked = cv2.bitwise_and(frame, frame, mask=mask)
+		#masked = cv2.bitwise_and(frame, frame, mask=mask)
 
 		contours, areas = self._getContours(mask)
 
 		objects = self._getContourImage(frame, contours)
+
+		shadow = np.ones(frame.shape, dtype=np.uint8) * 210
+		shadow = cv2.bitwise_and(shadow, shadow, mask=mask)
+		shadow[shadow == 0] = 255
 
 		centers = []
 		for c,_,_ in contours:
@@ -120,7 +124,7 @@ class Camera(object):
 
 		rects = self._get_display_rects(contours)
 		centers = self._get_display_centers(centers)
-		result = CameraResult(frame, (self._num_of_nochange < MOVING_THRESHOLD),
+		result = CameraResult(shadow, (self._num_of_nochange < MOVING_THRESHOLD),
 														objects, areas, centers, rects)
 		return result
 	
